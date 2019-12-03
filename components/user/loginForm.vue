@@ -67,14 +67,26 @@ export default {
     handleLoginSubmit () {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          this.$axios({
-            url: '/accounts/login',
-            method: 'POST',
-            data: this.form
+          // this.$axios({
+          //   url: '/accounts/login',
+          //   method: 'POST',
+          //   data: this.form
 
-          }).then((res) => {
-            console.log(res)
-            this.$store.commit('user/setUserInfo', res.data)
+          // }).then((res) => {
+          //   console.log(res)
+          //   this.$store.commit('user/setUserInfo', res.data)
+          // })
+          this.$store.dispatch('user/login', this.form).then((res) => {
+            this.$message({
+              message: '登录成功，正在跳转',
+              type: 'success'
+            })
+            // console.log(res)
+            // 跳转到首页
+            setTimeout(() => {
+              // 取代的后退会回到更上一个页面
+              this.$router.replace('/')
+            }, 1000)
           })
         } else {
           alert('输入不正确')
