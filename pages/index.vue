@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <!-- {{ $store.state.user.userInfo.token }} -->
     <!-- 幻灯片 -->
     <el-carousel
       :interval="5000"
