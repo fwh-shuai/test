@@ -36,6 +36,7 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    '@/plugins/axios',
     '@/plugins/element-ui',
     // '@/plugins/localStorage'//可以写成字符串也可以写成对象，对象要以下面的格式，因为localstore只能在浏览器运行，还要加ssr:false
     { src: '@/plugins/localStorage', ssr: false }

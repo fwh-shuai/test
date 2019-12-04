@@ -7,8 +7,16 @@ export const state = () => ({
 })
 // 改变数据状态,mutation里面每个属性都是函数
 export const mutations = {
+  // 每一个属性都是一个函数，调用this.$store.commit('user/setUserInfo',data)
+  // 有两个参数,
+  // 第一个,使我们的状态对象 state
+  // 第二个就是我们想要改变的数据
   setUserInfo (state, data) {
     state.userInfo = data
+  },
+  // 退出清除vuex，插件会自动清除localstorage
+  cleanUserInfo (state) {
+    state.userInfo = {}
   }
 }
 // 异步不能写在mutation里面，如果不想多次写axios可写在action里面,调用action相当于调用了mutation
@@ -26,7 +34,7 @@ export const actions = {
     }).then((res) => {
       // console.log(res)
       commit('setUserInfo', res.data)
-      // 这个return是必须的，每个.then后面要是还想要继续.then或.catch必须要有返回
+      // 这个return是必须的，每个.then后面要是还想要继续.then或.catch必须要有返回,这个返回值才是外面得到的
       return res.data
     })
   }

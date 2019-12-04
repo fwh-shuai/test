@@ -88,9 +88,6 @@ export default {
               this.$router.replace('/')
             }, 1000)
           })
-        } else {
-          alert('输入不正确')
-          return false
         }
       })
     }
