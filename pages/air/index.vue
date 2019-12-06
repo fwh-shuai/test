@@ -38,7 +38,19 @@
     </h2>
 
     <!-- 特价机票 -->
-    <div class="air-sale" />
+    <div class="air-sale">
+      <el-row type="flex" class="air-sale-pic" justify="space-between">
+        <el-col :span="6" v-for="(item, index) in sales" :key="index">
+          <nuxt-link :to="`/air/flights?departCity=${item.departCity}&departCode=${item.departCode}&destCity=${item.destCity}&destCode=${item.destCode}&departDate=${item.departDate}`">
+            <img :src="item.cover">
+            <el-row class="layer-bar" type="flex" justify="space-between">
+              <span>{{ item.departCity }}-{{ item.destCity }}</span>
+              <span>￥699</span>
+            </el-row>
+          </nuxt-link>
+        </el-col>
+      </el-row>
+    </div>
   </section>
 </template>
 
@@ -47,6 +59,23 @@ import SearchForm from '@/components/air/searchForm'
 export default {
   components: {
     SearchForm
+  },
+  data () {
+    return {
+      sales: []
+    }
+  },
+  mounted () {
+    // 页面挂载完毕就要进行数据的和获取
+    // 然后渲染特价机票列表
+    this.$axios({
+      url: '/airs/sale'
+    }).then((res) => {
+      const { data } = res.data
+      console.log(data)
+      // 将这个数据渲染到页面
+      this.sales = data
+    })
   }
 }
 </script>

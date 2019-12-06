@@ -3,9 +3,9 @@
     <!-- 头部tab切换 -->
     <el-row type="flex" class="search-tab">
       <span
+        @click="changeTab(index)"
         v-for="(item, index) in tabs"
         :key="index"
-        @click="handleSearchTab(item, index)"
         :class="{active: index === currentTab}"
       >
         <i :class="item.icon" />{{ item.name }}
@@ -20,6 +20,8 @@
           v-model="form.departCity"
           :fetch-suggestions="getDartList"
           @select="selectDepartCity"
+          :trigger-on-focus="false"
+          :highlight-first-item="true"
           placeholder="请搜索出发城市"
           class="el-autocomplete"
         />
@@ -29,6 +31,8 @@
           :fetch-suggestions="getDestList"
           v-model="form.destCity"
           @select="selectDestCity"
+          :trigger-on-focus="false"
+          :highlight-first-item="true"
           placeholder="请搜索到达城市"
           class="el-autocomplete"
         />
@@ -54,7 +58,7 @@
         </el-button>
       </el-form-item>
       <div class="reverse">
-        <span>换</span>
+        <span @click="reverseCity">换</span>
       </div>
     </el-form>
   </div>
@@ -83,36 +87,59 @@ export default {
 
   },
   methods: {
+    // 城市翻转
+    reverseCity () {
+      const { destCity, destCode, departCity, departCode } = this.form
+      // 然后两两互换
+      this.form.destCity = departCity
+      this.form.destCode = departCode
+      this.form.departCity = destCity
+      this.form.departCode = destCode
+    },
     // tab切换时触发
-    handleSearchTab (item, index) {
-
+    changeTab (index) {
+      if (index === 1) {
+        this.$confirm('目前暂不支持往返，请使用单程搜索！', '提示', {
+          confirmButtonText: '哦',
+          showCancelButton: false,
+          type: 'warning'
+        })
+      }
     },
 
     // 出发城市输入框获得焦点时触发
     // value 是选中的值，cb是回调函数，接收要展示的列表
     async  getDartList (value, cb) {
       const CityList = await this.searchCity(value)
+      // 为了避免用户直接输入后啥都不干,直接将输入框失去焦点
+      // 可以默认将城市列表第一个 sort 放入 form 当中
+      this.form.departCode = CityList[0].sort
       cb(CityList)
     },
     // 目标城市输入框获得焦点时触发
     // value 是选中的值，cb是回调函数，接收要展示的列表
     async  getDestList (value, cb) {
       const CityList = await this.searchCity(value)
+      // 为了避免用户直接输入后啥都不干,直接将输入框失去焦点
+      // 可以默认将城市列表第一个 sort 放入 form 当中
+      this.form.destCode = CityList[0].sort
       cb(CityList)
     },
     searchCity (value) {
       return this.$axios({
         url: '/airs/city',
         method: 'get',
-        params: { name: this.form.destCity }
+        params: { name: value }
       }).then((res) => {
         // console.log(res)
         const { data } = res.data
         const citys = data.map((element) => {
-          return { ...element, value: element.name }
+          // 为什么返回的还是一个数组，不是包在一个对象里了吗
+          return { ...element, value: element.name.replace('市', '') }
         })
-        return citys
-        // console.log(citys)
+        const cityList = citys.filter(element => element.sort)
+        // console.log(cityList)
+        return cityList
       })
     },
     // 出发城市下拉选择时触发
@@ -133,6 +160,11 @@ export default {
     // 提交表单是触发
     handleSubmit () {
       console.log(this.form)
+      this.$router.push({
+        path: '/air/flights',
+        query: this.form
+        // params: this.form
+      })
     }
   }
 }
