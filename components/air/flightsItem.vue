@@ -1,6 +1,6 @@
 <template>
   <div class="flight-item">
-    <div>
+    <div @click="showRecommend = !showRecommend">
       <!-- 显示的机票信息 -->
       <el-row type="flex" align="middle" class="flight-info">
         <el-col :span="6">
@@ -13,7 +13,7 @@
               <span>{{ flight.org_airport_name+flight.org_airport_quay }}</span>
             </el-col>
             <el-col :span="8" class="flight-time">
-              <span>2时20分</span>
+              <span>{{ duration }}</span>
             </el-col>
             <el-col :span="8" class="flight-airport">
               <strong>{{ flight.arr_time }}</strong>
@@ -28,7 +28,14 @@
     </div>
     <div class="flight-recommend">
       <!-- 隐藏的座位信息列表 -->
-      <el-row v-for="(item,index) in flight.seat_infos" type="flex" justify="space-between" align="middle">
+      <el-row
+        v-for="(item,index) in flight.seat_infos"
+        :key="index"
+        v-if="showRecommend"
+        type="flex"
+        justify="space-between"
+        align="middle"
+      >
         <el-col :span="4">
           低价推荐
         </el-col>
@@ -58,7 +65,31 @@
 
 <script>
 export default {
-  props: ['flight']
+  props: ['flight'],
+  data () {
+    return {
+      showRecommend: false
+    }
+  },
+  computed: {
+    duration () {
+      // 对于格式为2019-12-05 00:20:00，可以直接作为参数创建一个日期对象
+      // 时间戳=data.getTime()
+      const arr_timestamp = new Date(this.flight.arr_datetime).getTime()
+      const dep_timestamp = new Date(this.flight.dep_datetime).getTime()
+      let duration = arr_timestamp - dep_timestamp
+      // 这里处理跨过凌晨的飞行航班问题
+      if (duration < 0) {
+        // 跨过了凌晨,那么到达时间应该加上一天的毫秒数
+        const msOfDay = 24 * 60 * 60 * 1000
+        duration = arr_timestamp + msOfDay - dep_timestamp
+      }
+      const durationMinutes = duration / 1000 / 60
+      const hours = Math.floor(durationMinutes / 60)
+      const minutes = durationMinutes % 60
+      return hours + ' 小时 ' + minutes + ' 分钟'
+    }
+  }
 }
 </script>
 

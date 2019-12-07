@@ -135,7 +135,7 @@ export default {
         const { data } = res.data
         const citys = data.map((element) => {
           // 为什么返回的还是一个数组，不是包在一个对象里了吗
-          return { ...element, value: element.name.replace('市', '') }
+          return { ...element, value: element.name.replace(/市$/, '') }
         })
         const cityList = citys.filter(element => element.sort)
         // console.log(cityList)
