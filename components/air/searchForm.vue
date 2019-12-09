@@ -113,7 +113,10 @@ export default {
       const CityList = await this.searchCity(value)
       // 为了避免用户直接输入后啥都不干,直接将输入框失去焦点
       // 可以默认将城市列表第一个 sort 放入 form 当中
-      this.form.departCode = CityList[0].sort
+      // this.form.departCode = CityList[0].sort
+      if (CityList.length > 0) {
+        this.form.departCode = CityList[0].sort
+      }
       cb(CityList)
     },
     // 目标城市输入框获得焦点时触发
@@ -122,7 +125,10 @@ export default {
       const CityList = await this.searchCity(value)
       // 为了避免用户直接输入后啥都不干,直接将输入框失去焦点
       // 可以默认将城市列表第一个 sort 放入 form 当中
-      this.form.destCode = CityList[0].sort
+      // this.form.destCode = CityList[0].sort
+      if (CityList.length > 0) {
+        this.form.destCode = CityList[0].sort
+      }
       cb(CityList)
     },
     searchCity (value) {
@@ -160,6 +166,7 @@ export default {
     // 提交表单是触发
     handleSubmit () {
       console.log(this.form)
+      this.$store.commit('history/addHistoryItem', this.form)
       this.$router.push({
         path: '/air/flights',
         query: this.form

@@ -49,6 +49,7 @@
             </el-col>
             <el-col :span="3" class="choose-button">
               <el-button
+                @click="toOrderPage(item.seat_xid)"
                 type="warning"
                 size="mini"
               >
@@ -88,6 +89,17 @@ export default {
       const hours = Math.floor(durationMinutes / 60)
       const minutes = durationMinutes % 60
       return hours + ' 小时 ' + minutes + ' 分钟'
+    }
+  },
+  methods: {
+    toOrderPage (seatId) {
+      this.$router.push({
+        path: '/air/order',
+        query: {
+          id: this.flight.id,
+          seat_xid: seatId
+        }
+      })
     }
   }
 }

@@ -32,7 +32,7 @@
 
       <!-- 侧边栏 -->
       <div class="aside">
-        <!-- 侧边栏组件 -->
+        <FlightsAside />
       </div>
     </el-row>
   </section>
@@ -42,13 +42,15 @@
 import FlightsListHead from '@/components/air/flightsListHead.vue'
 import FlightsItem from '@/components/air/flightsItem.vue'
 import FlightsFilters from '@/components/air/flightsFilters.vue'
+import FlightsAside from '@/components/air/flightsAside.vue'
 
 export default {
 
   components: {
     FlightsListHead,
     FlightsItem,
-    FlightsFilters
+    FlightsFilters,
+    FlightsAside
   },
   data () {
     return {
@@ -77,26 +79,37 @@ export default {
       return this.flightsData.flights.slice(start, end)
     }
   },
+  watch: {
+    // 这个函数用$route,因为要监听的刚好是$route里的东西
+    $route () {
+      console.log(this.$route.query.departCity)
+      // 一般不建议强制刷新，用户体验不好
+      //   location.reload()
+      this.loadPageData()
+    }
+  },
   mounted () {
     // console.log(this.$route.query);
     // 对于路由,两种参数分别是 params 和 query
     // 对于 axios 两种参数分别是 data 和 params
-
-    this.$axios({
-      url: '/airs',
-      // 参数可以通过 this.$route.query
-      // 这里面数据本来就是一个对象,所以无需自己拼接
-      params: this.$route.query
-    }).then((res) => {
-      console.log(res)
-      this.flightsData = res.data
-      this.cacheFlightsData = { ...this.flightsData }
-      // 这里是分页, 我们需要拿到数据的开始index 和结尾的 index
-      // this.loadPage()
-      this.loading = false// 这肯定会执行的，不管datalist是否大于0,不过要同时两个条件成立才会显示无数据，否则优先显示数据
-    })
+    this.loadPageData()
   },
   methods: {
+    loadPageData () {
+      this.$axios({
+        url: '/airs',
+        // 参数可以通过 this.$route.query
+        // 这里面数据本来就是一个对象,所以无需自己拼接
+        params: this.$route.query
+      }).then((res) => {
+        console.log(res)
+        this.flightsData = res.data
+        this.cacheFlightsData = { ...this.flightsData }
+        // 这里是分页, 我们需要拿到数据的开始index 和结尾的 index
+        // this.loadPage()
+        this.loading = false// 这肯定会执行的，不管datalist是否大于0,不过要同时两个条件成立才会显示无数据，否则优先显示数据
+      })
+    },
     setFlightsData (newFlightsList) {
       // console.log('修改机票筛选参数被触发')
       // 接受到新的机票数据
