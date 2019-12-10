@@ -57,6 +57,18 @@
 <script>
 import SearchForm from '@/components/air/searchForm'
 export default {
+  // 如果 transition 是字符串,那么就相当于 transition 标签的name,这种是自定义的不是引用第三方库了
+  // transition: "fade",
+  // 还可以使用对象的形式定义 transition
+  // 下面这种是对整个组件都有动画效果，如果是想用标签包着局部效果类似自定义那种请看login
+  transition: {
+    // 现在我想将进入和消失的动画使用自定义的类名, 方便使用第三方库 animate.css
+    // page-enter-active
+    // enter-active-class:
+    // enterActiveClass: 这里的属性是一个字符串, 包括想要使用的css类名, 第一个是写死的 animated, 第二个是动画名,
+    enterActiveClass: 'animated fadeInLeftBig'
+    // leaveActiveClass
+  },
   components: {
     SearchForm
   },
